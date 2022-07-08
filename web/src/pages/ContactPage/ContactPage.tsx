@@ -1,3 +1,12 @@
+/*
+Tutorial - for some reason going into the types definitions if these are defined but showing an error causes the error to go away.
+Not sure if something is being generated and that is being triggered when you go to settings definition?
+*/
+import {
+  CreateContactMutation,
+  CreateContactMutationVariables,
+} from 'types/graphql'
+
 import {
   FieldError,
   Form,
@@ -7,7 +16,15 @@ import {
   TextAreaField,
   TextField,
 } from '@redwoodjs/forms'
-import { MetaTags } from '@redwoodjs/web'
+import { MetaTags, useMutation } from '@redwoodjs/web'
+
+const CREATE_CONTACT = gql`
+  mutation CreateContactMutation($input: CreateContactInput!) {
+    createContact(input: $input) {
+      id
+    }
+  }
+`
 
 interface FormValues {
   name: string
@@ -15,9 +32,25 @@ interface FormValues {
   message: string
 }
 
+/*
+Need to update this in tutorial doc as well, as mutation is defined as
+
+const [create] = useMutation<
+  CreateContactMutation,
+  CreateContactMutationVariables
+>(CREATE_CONTACT)
+
+in tutorial, due to issue described in contacts service.
+*/
+
 const ContactPage = () => {
+  const [create] = useMutation<
+    CreateContactMutation,
+    CreateContactMutationVariables
+  >(CREATE_CONTACT)
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data)
+    create({ variables: { input: data } })
   }
 
   return (
